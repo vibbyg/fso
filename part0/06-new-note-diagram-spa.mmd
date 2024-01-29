@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant browser
+    participant server
+
+    browser->>server: POST the new note in JSON format {content: "", date: ""} to https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+    activate server
+    server-->>browser: returns a 201 created status code with a message saying "note created", representing that the note was successfully added to the server.
+    deactivate server
+
+    Note right of browser: Everything that happens from this point on is within the JS file in the browser itself. 
+    Note right of browser: First, the new note is added to the current notes in the browser, which rerenders the notes on the list to make them visible.
+    Note right of browser: Then, the new note is sent to the server in JSON format. No redirect is needed after since it has already been rendered.
