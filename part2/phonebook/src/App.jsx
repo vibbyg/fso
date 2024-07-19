@@ -51,6 +51,15 @@ const App = () => {
           setNewName('');
           setNewNumber('');
         })
+        .catch(error => {
+          setSuccessObj({success: false, message: `Information of ${person.name} has already been removed from server`});
+          setTimeout(() => {
+            setSuccessObj({...successObj, message: null});
+          }, 5000);
+          setNewName('');
+          setNewNumber('');
+        }
+        )
       } 
     }
     else{
