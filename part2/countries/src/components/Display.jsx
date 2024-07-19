@@ -1,3 +1,4 @@
+import CountryDisplay from "./CountryDisplay";
 import CountryInfo from "./CountryInfo";
 
 const Display = ({ countries }) => {
@@ -9,9 +10,8 @@ const Display = ({ countries }) => {
             ? "Too many matches, specify another filter" 
             : countries.length === 1 
             ? <CountryInfo country={countries[0]} />
-            : countries.map((country, index) => {
-                return <div key={index}>{country.name.common}</div>
-            })}
+            : <CountryDisplay countries={countries} />
+            }
         </div>
     )
 
