@@ -32,7 +32,7 @@ const CountryInfo = ({ country }) => {
             <h3>Weather in {country.capital}</h3>
             {weather ?
             <div>
-                <b>Temperature:</b> {weather.main.temp}<br/>
+                <b>Temperature:</b> {parseFloat((weather.main.temp - 273.15).toFixed(2))}° celsius<br/>
                 <img src={weatherIconUrl(weather.weather[0].icon)} /><br/>
                 <b>Wind:</b> {weather.wind.speed}m/s
             </div>
