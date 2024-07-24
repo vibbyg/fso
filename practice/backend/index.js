@@ -1,5 +1,7 @@
 const express = require('express')
 const cors = require('cors')
+const Note = require('./models/note')
+
 const app = express()
 
 const requestLogger = (request, response, next) => {
@@ -32,31 +34,21 @@ let notes = [
       important: true
     }
   ]
-
-const generateId = () => {
-    const maxId = notes.length > 0 ? Math.max(...notes.map(note => Number(note.id))) : 0
-
-    return String(maxId + 1)
-}
   
 app.get('/', (request, response) => {
     response.send('<h1>Hello World</h1>')
 })
 
 app.get('/api/notes', (request, response) => {
-    response.json(notes)
+    Note.find({}).then(notes => {
+        response.json(notes)
+    })
 })
 
 app.get('/api/notes/:id', (request, response) => {
-    const id = request.params.id
-    const note = notes.find(note => note.id == id)
-
-    if (note) {
+    Note.findById(request.params.id).then(note => {
         response.json(note)
-    }
-    else{
-        response.status(404).end()
-    }
+    })
 })
 
 app.delete('/api/notes/:id', (request, response) => {
@@ -71,14 +63,14 @@ app.post('/api/notes', (request, response) => {
         return response.status(400).json({ error: 'content missing' })
     }
 
-    const note = {
+    const note = new Note({
         content: body.content,
-        important: Boolean(body.important) || false,
-        id: generateId()
-    }
+        important: body.important || false
+    })
 
-    notes = notes.concat(note);
-    response.json(note)
+    note.save().then(savedNote => {
+        response.json(savedNote)
+    })
 })
 
 const unknownEndpoint = (request, response) => {
@@ -86,6 +78,6 @@ const unknownEndpoint = (request, response) => {
 }
 app.use(unknownEndpoint)
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT)
 console.log(`Server started on PORT ${PORT}`);
