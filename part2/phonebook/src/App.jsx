@@ -4,6 +4,7 @@ import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
 import personsService from './services/persons';
 import Notification from './components/Notification';
+import './index.css';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -35,10 +36,7 @@ const App = () => {
   const handlePersonAdd = (event) => {
     event.preventDefault();
     const person = persons.find(person => person.name === newName);
-    if(newNumber === '' || newName === '') {
-      alert('Cannot have empty fields in phone book.');
-    }
-    else if(person) {
+    if(person) {
       if(window.confirm(`${newName} is already in the phonebook! Replace old phone # with new one?`)) {
         personsService.update(person.id, {...person, number: newNumber})
         .then(res => {
@@ -52,7 +50,7 @@ const App = () => {
           setNewNumber('');
         })
         .catch(error => {
-          setSuccessObj({success: false, message: `Information of ${person.name} has already been removed from server`});
+          setSuccessObj({success: false, message: error.response.data.error});
           setTimeout(() => {
             setSuccessObj({...successObj, message: null});
           }, 5000);
@@ -73,6 +71,14 @@ const App = () => {
         setNewName('');
         setNewNumber('');
       })
+      .catch(error => {
+        setSuccessObj({success: false, message: error.response.data.error});
+        setTimeout(() => {
+          setSuccessObj({...successObj, message: null})
+        }, 5000)
+        setNewName('');
+        setNewNumber('');
+      })
     }
   }
 
@@ -90,7 +96,7 @@ const App = () => {
   const personsFiltered = filterName !== '' ? persons.filter(person => person.name.toLowerCase().includes(filterName.toLowerCase())) : persons;
 
   return (
-    <div>
+    <div className={'phonebook'}>
       <h2>Phonebook</h2>
       <Notification message={successObj.message} success={successObj.success} />
       <SearchFilter filterName={filterName} handleFilterName={handleFilterName} />
